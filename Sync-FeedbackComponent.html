@@ -1,0 +1,221 @@
+﻿<script src="https://hhhhteams.sharepoint.com/sites/HHHHTeams/Style%20Library/js/angular/Sync-FeedbackComponent/Sync-FeedbackComponent.js"></script>
+
+<script src="https://hhhhteams.sharepoint.com/sites/HHHHTeams/Style%20Library/js/angular/Services/alasql.min.js"></script>
+
+<style>
+    .container-new td {
+        word-break: break-all !important;
+    }
+
+    .displayLabel {
+        display: none;
+    }
+    /*** for table use ***/
+    .page-content {
+        width: auto !important;
+        margin-right: 36px !important;
+        height: auto !important;
+        margin-left: -25px !important;
+    }
+
+    .for-lis {
+        display: inline-flex;
+        width: 100%;
+        padding: 5px;
+    }
+
+    .pt-0 {
+        padding-top: 0px !important;
+    }
+
+    .padLR {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+
+    .arrow_up {
+        margin-top: -4px;
+        cursor: pointer;
+        margin-left: 4px;
+    }
+
+    .arrow_down {
+        margin-top: 10px;
+        cursor: pointer;
+        margin-left: 4px;
+    }
+
+    .glyphicon {
+        right: auto !important;
+    }
+
+    .for-c0l {
+        background: #e7e3e3 !important;
+        border: 1px solid #fff;
+    }
+
+    .for-c02 {
+        background: #f7f5f5 !important;
+        border: 1px solid #fff;
+    }
+
+    .for-c03 {
+        background: #fff !important;
+        border: 1px solid #eee;
+    }
+
+    .tdrows {
+        border: 1px solid #f2f2f2 !important;
+    }
+
+    .project_active {
+        background: #cecccc !important;
+    }
+
+    .section-event .searchclear {
+        right: auto !important;
+        margin-left: -19px;
+        bottom: auto;
+        top: 11px !important;
+    }
+
+    .glyphicon_active {
+        right: auto !important;
+    }
+
+    .width-90 {
+        width: 90%;
+    }
+
+    .ml5 {
+        margin-left: 10px;
+    }
+
+    .ml20 {
+        margin-left: 28px;
+    }
+
+    .ml35 {
+        margin-left: 45px;
+    }
+</style>
+<div class="" ng-controller="ComponentsDetailController">
+    <div class="" ng-cloak>
+        <div class="panel-body">
+            <div class="row Doc-align">
+                <div class="col-sm-2">
+                    <label> Search Questions : </label>
+                </div>
+                <div class="col-sm-4 PadR0 padL-0">
+                    <input id="searchinput" type="search" ng-model="search" placeholder="Search all..." class="form-control searchbox_height">
+                    <span class="searchclear" ng-click="clearControl('searchinput')">X</span>
+                </div>
+                <div class="col-sm-3">
+                    <label> <span> Showing </span> {{filtered.length}} </label> 
+                    <label>
+                        <span>
+                            Of
+                        </span> {{AllComponentsDetail.length}}
+                    </label> <label>ComponentsDetail</label>
+                </div>
+
+                <div class="col-sm-1 no-padding clear-all">
+                    <a data-ng-click="ClearFilters()" class="hreflink pull-right">
+                        <label ng-bind-html="GetColumnDetails('ClearAll') | trustedHTML"></label> <img ng-src="/_layouts/images/delete.gif">
+                    </a>
+                </div>
+                <div class="col-sm-1 print-icon">
+                    <img class="pull-right" ng-src="https://hhhhteams.sharepoint.com/sites/HHHHTeams/SiteCollectionImages/ICONS/24/icon_Printer.png" ng-click="printResults()" />
+                    <img class="pull-right" ng-src="https://hhhhteams.sharepoint.com/sites/HHHHTeams/SiteCollectionImages/ICONS/24/icon_excel.png" ng-click="exportToExcel()" />
+                </div>
+            </div>
+            <div id="table-wrapper" class="section-event pt-0">
+                <ul id="documents" class="table table-fixed table-hover" width="100%" style="display: contents;">
+                    <li class="for-lis" style="display: flex;">
+                        <div style="width:41%;" id="searchName" class="display_hide">
+                            <div style="width:97%;" class="displayLabel">
+                                <label>Title</label>
+                            </div>
+                            <div style="width:95%" class="headcontainer">
+                                <input type="text" id="searchName" placeholder="Search Title"
+                                       class="width-90 searchbox_height" ng-model="searchName" />
+                                <span class="searchclear" ng-click="clearControl('searchName')">X</span>
+                                <span class="{{orderBy=='Title'&&!reverse?'glyphicon_active':'glyphicon'}}  glyphicon-chevron-up direction-arrow arrow_up"
+                                      ng-click="sortBy('Title', false)"></span>
+                                <span class="{{orderBy=='Title'&&reverse?'glyphicon_active':'glyphicon'}}  glyphicon-chevron-down direction-arrow arrow_down"
+                                      ng-click="sortBy('Title', true)"></span>
+                            </div>
+                        </div>
+
+                        <div style="width:41%;" id="searchAnswer" class="display_hide">
+                            <div style="width:97%;" class="displayLabel">
+                                <label> ComponentId</label>
+                            </div>
+                            <div style="width:95%" class="headcontainer">
+                                <input type="text" id="searchComponentId" placeholder="Search ComponentId"
+                                       class="width-90 searchbox_height" ng-model="searchComponentId" />
+                                <span class="searchclear" ng-click="clearControl('searchComponentId')">X</span>
+                                <span class="{{orderBy=='ComponentId'&&!reverse?'glyphicon_active':'glyphicon'}}  glyphicon-chevron-up direction-arrow arrow_up"
+                                      ng-click="sortBy('ComponentId', false)"></span>
+                                <span class="{{orderBy=='ComponentId'&&reverse?'glyphicon_active':'glyphicon'}}  glyphicon-chevron-down direction-arrow arrow_down"
+                                      ng-click="sortBy('ComponentId', true)"></span>
+                            </div>
+                        </div>
+
+                        <div style="width:14%;" id="searchCreated" class="display_hide">
+                            <div style="width:90%;" class="displayLabel">
+                                <label>ModifiedDate</label>
+                            </div>
+                            <div style="width:80%;" class="headcontainer">
+                                <input type="text" id="searchModifieddate " placeholder="Modified Date"
+                                       class="width-90 searchbox_height" ng-model="searchModifieddate" />
+                                <span class="searchclear" ng-click="clearControl('searchModifieddate')">X</span>
+                                <span class="{{orderBy=='Modified'&&!reverse?'glyphicon_active':'glyphicon'}}  glyphicon-chevron-up direction-arrow arrow_up"
+                                      ng-click="sortBy('Modified', false)"></span>
+
+                                <span class="{{orderBy=='Modified'&&reverse?'glyphicon_active':'glyphicon'}}  glyphicon-chevron-down direction-arrow arrow_down"
+                                      ng-click="sortBy('Modified', true)"></span>
+                            </div>
+                        </div>
+                        <!--<div style="width:2%;" class="display_hide">
+                            <div style="width:80%;"></div>
+                        </div>
+                        <div style="width:2%;" class="display_hide">
+                            <div style="width:80%;"></div>
+                        </div>-->
+                    </li>
+
+                    <div class="container-new">
+                        <li class="tdrows for-lis"
+                            ng-repeat="item in filtered = (AllComponentsDetail | filter:search | orderBy:orderBy:reverse
+                                            | filter:{ModifiedDate:searchModifieddate,Editor:searchmodifiedby,Title:searchName,Author:searchcreatedby,ComponentId:searchComponentId})" style="display:flex;">
+                            <div class="display_hide padLR" style="width:40%;">
+                                <div class="name">{{item.Title}}</div>
+                            </div>
+                            <div class="display_hide padLR" style="width:43%;">{{item.ComponentId}}</div>
+
+                            <div class="display_hide padLR" style="width:13%;">{{item.ModifiedDate}}</div>
+
+                            <!--<div class="icontype display_hide padLR" style="width:2%;">
+                                <a class="hreflink"
+                                   ng-click="updateQuestion(item)">
+                                    <img ng-src="https://hhhhteams.sharepoint.com/sites/HHHHTeams/_layouts/images/edititem.gif">
+                                </a>
+                            </div>
+                            <div class="icontype display_hide padLR" style="width:2%;">
+                                <a class="hreflink"
+                                   title="Delete">
+                                    <img data-ng-click="removeItem(item)"
+                                         ng-src="https://hhhhteams.sharepoint.com/sites/HHHHTeams/_layouts/images/delete.gif">
+                                </a>
+                            </div>-->
+                        </li>
+                    </div>
+                </ul>
+
+            </div>
+        </div>
+    </div>
+
+
+</div>
